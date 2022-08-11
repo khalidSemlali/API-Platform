@@ -6,11 +6,20 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;    
 
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource (
-    normalizationContext: ['groups' => ['read:collection']]
+    normalizationContext: ['groups' => ['read:collection']],
+    denormalizationContext: ['groups' => ['put:Post']],
+    itemOperations: [
+        'put',
+        'delete',
+        'get' => [
+            'normalization_content' => ['groups' => ['read:collection', 'read:item', 'read:Post']]
+        ]
+    ]
 )]
 
 
@@ -23,24 +32,32 @@ class Post
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:collection'])]
+    #[Groups(['read:collection', 'put:Post'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:collection'])]
+    #[Groups(['read:collection', 'put:Post'])]  
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['read:item', 'put:Post'])]  
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Groups(['read:item'])]  
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[Groups(['read:item', 'put:Post'])]  
     private ?Category $category = null;
+
+    public function __construct (){
+        $this->createdAt = new \DateTime();
+        $this->updated = new \DateTime();
+    }
 
     public function getId(): ?int
     {
