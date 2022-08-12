@@ -45,17 +45,17 @@ class Post
 
     #[ORM\Column]
     #[Groups(['read:item'])]  
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[Groups(['read:item', 'put:Post'])]  
     private ?Category $category = null;
 
     public function __construct (){
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new \DateTime(); 
         $this->updated = new \DateTime();
     }
 
