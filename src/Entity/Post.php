@@ -6,13 +6,22 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;    
-
+use Symfony\Component\Serializer\Annotation\Groups;  
+use Symfony\Component\Validator\Constraints\Length;  
+use Symfony\Component\Validator\Constraints\Valid;  
+use ApiPlatform\Core\Annotation\ApiFilter;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource (
     normalizationContext: ['groups' => ['read:collection']],
     denormalizationContext: ['groups' => ['put:Post']],
+    paginationItemsPerPage: 2,
+    paginationMaximumItemsPerPage: 2,
+    paginationClientItemsPerPage:true,
+    collectionOperations: [
+        'get',
+        'post'
+    ],
     itemOperations: [
         'put',
         'delete',
@@ -20,7 +29,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'normalization_content' => ['groups' => ['read:collection', 'read:item', 'read:Post']]
         ]
     ]
-)]
+        ),
+        ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])
+        ]
 
 
 class Post
@@ -32,7 +43,8 @@ class Post
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:collection', 'put:Post'])]
+    #[Groups(['read:collection', 'put:Post']),
+    Length(min:5, groups: ['create:Post'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
@@ -43,22 +55,11 @@ class Post
     #[Groups(['read:item', 'put:Post'])]  
     private ?string $content = null;
 
-    #[ORM\Column]
-    #[Groups(['read:item'])]  
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
-    #[Groups(['read:item'])]  
-    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[Groups(['read:item', 'put:Post'])]  
     private ?Category $category = null;
 
-    public function __construct (){
-        $this->createdAt = new \DateTimeImmutable(); 
-        $this->updated = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
@@ -101,29 +102,6 @@ class Post
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
 
     public function getCategory(): ?Category
     {
