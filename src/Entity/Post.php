@@ -10,6 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Length;  
 use Symfony\Component\Validator\Constraints\Valid;  
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource (
@@ -27,11 +28,10 @@ use ApiPlatform\Core\Annotation\ApiFilter;
         'delete',
         'get' => [
             'normalization_content' => ['groups' => ['read:collection', 'read:item', 'read:Post']]
-        ]
+        ]   
     ]
         ),
-        ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])
-        ]
+        ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'title' => 'partial'])]
 
 
 class Post
