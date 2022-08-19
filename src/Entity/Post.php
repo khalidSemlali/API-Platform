@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Controller\PostPublishController;
+use App\Controller\PostCountController;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
@@ -10,24 +12,46 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Length;  
 use Symfony\Component\Validator\Constraints\Valid;  
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ApiResource (
-    normalizationContext: ['groups' => ['read:collection']],
+    normalizationContext: ['groups' => ['read:collection'], 'openapi_definition_name' => 'Collection'],
     denormalizationContext: ['groups' => ['put:Post']],
     paginationItemsPerPage: 2,
     paginationMaximumItemsPerPage: 2,
     paginationClientItemsPerPage:true,
     collectionOperations: [
-        'get',
-        'post'
+        'get',      
+        'post',
+        'count' => [
+            'method' => 'GET',
+            'path' => 'posts/count',
+            'controller' => PostCountController::class
+        ]
     ],
     itemOperations: [
         'put',
         'delete',
         'get' => [
-            'normalization_content' => ['groups' => ['read:collection', 'read:item', 'read:Post']]
+            'normalization_content' => ['groups' => ['read:collection', 'read:item', 'read:Post'], 
+            'openapi_definition_name' => 'Detail']
+        ],
+        'publish' => [
+            'method' => 'POST',
+            'path' => '/posts/{id}/publish',
+            'controller' => PostPublishController::class,
+            'openapi_context' => [
+                'summary' => 'permet de publier un article',
+                'requestBody' => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => []
+                        ]
+                    ]
+                ]
+            ]
         ]   
     ]
         ),
@@ -59,6 +83,11 @@ class Post
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[Groups(['read:item', 'put:Post'])]  
     private ?Category $category = null;
+
+    #[ORM\Column(type:"boolean", options: ["default: 0"])]
+    #[Groups(['read:collection']),
+    ApiProperty(openapiContext: ['type' => 'boolean', 'description' => 'en ligne ou pas ?'])]  
+    private ?bool $online = false;
 
 
     public function getId(): ?int
@@ -111,6 +140,18 @@ class Post
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function isOnline(): ?bool
+    {
+        return $this->online;
+    }
+
+    public function setOnline(bool $online): self
+    {
+        $this->online = $online;
 
         return $this;
     }
