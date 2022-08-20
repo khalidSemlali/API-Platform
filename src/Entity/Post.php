@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\HttpFoundation\Request;
 use App\Controller\PostPublishController;
 use App\Controller\PostCountController;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -28,7 +29,25 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
         'count' => [
             'method' => 'GET',
             'path' => 'posts/count',
-            'controller' => PostCountController::class
+            'controller' => PostCountController::class,
+            'read' => false,    
+            'pagination_enabled' => false,
+            'filters' => [],
+            'openapi_context' => [
+                'summary' => 'Recupere le nombre total darticle',
+                'parameters' => [
+                    [
+                        'in' => 'query',
+                        'name' => 'online',
+                        'schema' => [
+                            'type' => 'integer',
+                            'maximum' => 1,
+                            'minimum' => 0
+                        ],
+                        'description' => 'filtre les articles'
+                    ]
+                ],
+            ]
         ]
     ],
     itemOperations: [

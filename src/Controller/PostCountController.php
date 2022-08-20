@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
 use App\Repository\PostRepository;
 
 
@@ -17,8 +18,9 @@ class PostCountController
 
     }
 
-    public function __invoke(): int
+    public function __invoke(Request $request): int
     {
+        dd($request->get('online'));
         return $this->postRepository->count([]);
     }
 }
