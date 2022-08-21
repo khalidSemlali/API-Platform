@@ -8,10 +8,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;    
+use ApiPlatform\Core\Action\NotFoundAction;
 
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    collectionOperations: ['get', 'post'],
+    itemOperations: [
+        'put', 
+        'patch', 
+        'delete', 
+        'get' => [
+            'controller' => NotFoundAction::class,
+            'read' => false,
+            'output' => false
+        ]],
+)]
 class Category
 {
     #[ORM\Id]

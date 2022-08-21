@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Symfony\Component\HttpFoundation\Request;
 use App\Controller\PostPublishController;
 use App\Controller\PostCountController;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -47,6 +46,19 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
                         'description' => 'filtre les articles'
                     ]
                 ],
+                'responses' => [
+                    '200' => [
+                        'description' => 'ok',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'type' => 'integer',
+                                    'example' => 3  
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ]
     ],
