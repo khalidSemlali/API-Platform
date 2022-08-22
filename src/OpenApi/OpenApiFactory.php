@@ -4,18 +4,28 @@ namespace App\OpenApi;
 
 use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\Core\OpenApi\OpenApi;
+use ApiPlatform\Core\OpenApi\Model\PathItem;
+use ApiPlatform\Core\OpenApi\Model\Operation; 
+
 
 class OpenApiFactory implements OpenApiFactoryInterface
 {
     public function __construct(private OpenApiFactoryInterface $decorated)
     {
-
+        
     }
 
     public function __invoke(array $context = []): OpenApi
     {
         $openApi = $this->decorated->__invoke($context);
-        dd($openApi);
-        return $openApi;
+        /** @var PathItem $path */
+        
+        // foreach($openApi->getPaths()->getPaths() as $key as $path){
+        //     if ($path->getGet() && $path->getGet()->getSummary() == 'hidden'){
+        //         $openApi->getPaths()->addPath($key, $path->withGet(null));
+        //     }
+        // }
+        // $openApi->getPaths()->addPath('/ping', new PathItem(null, 'Ping', null, new Operation('ping-id', [], [], 'Repond'));)
+        // return $openApi;
     }
 }

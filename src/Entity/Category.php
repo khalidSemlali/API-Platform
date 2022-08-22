@@ -20,6 +20,9 @@ use ApiPlatform\Core\Action\NotFoundAction;
         'delete', 
         'get' => [
             'controller' => NotFoundAction::class,
+            'openapi_context' => [
+                'summary' => 'hidden',
+            ],
             'read' => false,
             'output' => false
         ]],
