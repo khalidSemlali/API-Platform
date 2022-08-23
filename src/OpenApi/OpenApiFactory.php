@@ -10,8 +10,7 @@ use ApiPlatform\Core\OpenApi\Model\Operation;
 
 class OpenApiFactory implements OpenApiFactoryInterface
 {
-    public function __construct(private OpenApiFactoryInterface $decorated)
-    {
+    public function __construct(private OpenApiFactoryInterface $decorated){
         
     }
 
@@ -20,12 +19,12 @@ class OpenApiFactory implements OpenApiFactoryInterface
         $openApi = $this->decorated->__invoke($context);
         /** @var PathItem $path */
         
-        // foreach($openApi->getPaths()->getPaths() as $key as $path){
-        //     if ($path->getGet() && $path->getGet()->getSummary() == 'hidden'){
-        //         $openApi->getPaths()->addPath($key, $path->withGet(null));
-        //     }
-        // }
-        // $openApi->getPaths()->addPath('/ping', new PathItem(null, 'Ping', null, new Operation('ping-id', [], [], 'Repond'));)
-        // return $openApi;
+        foreach($openApi->getPaths()->getPaths() as $key => $path){
+            if ($path->getGet() && $path->getGet()->getSummary() == 'hidden'){
+                $openApi->getPaths()->addPath($key, $path->withGet(null));
+            }
+        }
+        $openApi->getPaths()->addPath('/ping', new PathItem(null, 'Ping', null, new Operation('ping-id', [], [], 'Repond')));
+        return $openApi;
     }
 }

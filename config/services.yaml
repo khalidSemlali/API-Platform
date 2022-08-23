@@ -26,3 +26,7 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # api/config/services.yaml
+App\OpenApi\Factory\OpenApiFactory:
+  decorates: "api_platform.openapi.factory"
+  arguments: ['@App\OpenApi\OpenApiFactory.inner']
+  autoconfigure: false
