@@ -17,7 +17,7 @@ RestrictionDataProviderInterface
         $json = json_decode(file_get_contents($path), true);
         $items = [];
         foreach($json['require'] as $name => $version) {
-            $items[] = new Dependency('aze', $name, $version);
+            $items[] = new Dependency(Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString(), $name, $version);
         }
         return $items;
     }
