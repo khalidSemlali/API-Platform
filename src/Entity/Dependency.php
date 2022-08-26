@@ -6,7 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 #[ApiResource(
-    collectionOperations: ['get'],
+    collectionOperations: ['get', 'post'],
     itemOperations: ['get'],
     paginationEnabled: false
 )]
@@ -31,11 +31,10 @@ class Dependency
     private string $version;
 
     public function __construct(
-    string $uuid,
      string $name,
      string $version,
     ){
-        $this->uuid = $uuid;
+        $this->uuid = Uuid::uuid5(Uuid::NAMESPACE_URL, $name)->toString();
         $this->name = $name;
         $this->version = $version;
     }
