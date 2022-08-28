@@ -4,7 +4,7 @@ namespace App\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Entity\Dependency;
-use App\Repository\DependencyRepository;
+use App\Repository\DependencyRepository;    
 
 class DependencyDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -25,6 +25,7 @@ class DependencyDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
-        //
+        $this->repository->remove($data);
+        
     }
 }
